@@ -59,3 +59,15 @@ def get_normal_vector__torch_batch(p1, p2, p3):
     x = torch.cross(v1, v2, dim=-1)
     return x / torch.norm(x, dim=-1).unsqueeze(-1)
 
+def torch_dot_batch(v1, v2):
+    return torch.sum(v1 * v2, dim=-1)
+
+def get_chi_angle(plane_norm_1, plane_norm_2, a2, a3):
+    
+    sign_vec = a3 - a2
+    sign_with_magnitude = torch_dot_batch(sign_vec, torch.cross(plane_norm_1, plane_norm_2, dim=-1))
+    sign = sign_with_magnitude / torch.abs(sign_with_magnitude)
+    
+    chi_angle = sign * torch.acos(torch_dot_batch(plane_norm_1, plane_norm_2))
+    
+    return chi_angle
